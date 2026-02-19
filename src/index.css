@@ -4,6 +4,7 @@
   --color-primary: #24fc7a;
   --color-primary-100: color-mix(in srgb, #24fc7a 15%, transparent);
   --color-primary-500: #24fc7a;
+  --color-danger: #ff3014;
 }
 
 body {

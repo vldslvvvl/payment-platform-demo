@@ -1,6 +1,6 @@
 const bankSber = {
   name: 'sber',
-  id: '2234a709-2b43-4681-bb50-030360bbbf4b',
+  id: 'e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b',
   status: 'active',
   code: 'sber900',
   created_at: '2025-11-24T12:58:08.618509',
@@ -8,7 +8,7 @@ const bankSber = {
 
 const bankTinkoff = {
   name: 'tinkoff',
-  id: 'a1b2c3d4-5678-90ab-cdef-111111111111',
+  id: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
   status: 'active',
   code: 'tinkoff001',
   created_at: '2025-11-25T10:00:00.000000',
@@ -16,9 +16,9 @@ const bankTinkoff = {
 
 export const mockRequisites = [
   {
-    id: 'bd420da3-ca8a-4e97-a8a0-5b6f1bdf6721',
-    bank_id: '2234a709-2b43-4681-bb50-030360bbbf4b',
-    trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+    id: '9f8e7d6c-5b4a-4c3d-2e1f-0a1b2c3d4e5f',
+    bank_id: 'e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b',
+    trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
     requisites: '1234 5678 9012 3456',
     phone_number: null,
     operation_type: 'debit',
@@ -43,11 +43,11 @@ export const mockRequisites = [
     bank: bankSber,
     statistics: {
       stat_order_in_parallel: 0,
-      trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+      trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
       stat_cnt_success_order: 0,
       stat_median_amount: 0.0,
       stat_success_conversion: 0.0,
-      id: '72e8ee6c-632d-4d2f-baed-c7c961facce4',
+      id: '6c5b4a3c-2d1e-4f0a-1b2c-3d4e5f6a7b8c',
       stat_last_order_create_dttm: null,
       stat_cnt_issuance: 0,
       stat_sum_success_order: 0.0,
@@ -56,9 +56,9 @@ export const mockRequisites = [
     },
   },
   {
-    id: 'req-sbp-001',
-    bank_id: 'a1b2c3d4-5678-90ab-cdef-111111111111',
-    trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+    id: '8e7d6c5b-4a3c-4d2e-1f0a-1b2c3d4e5f6a',
+    bank_id: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+    trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
     requisites: null,
     phone_number: '89991234567',
     operation_type: 'credit',
@@ -83,11 +83,11 @@ export const mockRequisites = [
     bank: bankTinkoff,
     statistics: {
       stat_order_in_parallel: 2,
-      trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+      trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
       stat_cnt_success_order: 15,
       stat_median_amount: 5000.0,
       stat_success_conversion: 0.85,
-      id: 'stat-sbp-001',
+      id: '5b4a3c2d-1e0f-4a1b-2c3d-4e5f6a7b8c9d',
       stat_last_order_create_dttm: '2026-02-18T19:00:00.000000',
       stat_cnt_issuance: 8,
       stat_sum_success_order: 75000.0,
@@ -96,9 +96,9 @@ export const mockRequisites = [
     },
   },
   {
-    id: 'req-transfer-001',
-    bank_id: '2234a709-2b43-4681-bb50-030360bbbf4b',
-    trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+    id: '7d6c5b4a-3c2d-4e1f-0a1b-2c3d4e5f6a7b',
+    bank_id: 'e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b',
+    trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
     requisites: null,
     phone_number: null,
     operation_type: 'debit',
@@ -123,11 +123,11 @@ export const mockRequisites = [
     bank: bankSber,
     statistics: {
       stat_order_in_parallel: 0,
-      trader_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+      trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
       stat_cnt_success_order: 0,
       stat_median_amount: 0.0,
       stat_success_conversion: 0.0,
-      id: 'stat-transfer-001',
+      id: '4a3c2d1e-0f1a-4b2c-3d4e-5f6a7b8c9d0e',
       stat_last_order_create_dttm: null,
       stat_cnt_issuance: 0,
       stat_sum_success_order: 0.0,

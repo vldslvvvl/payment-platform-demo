@@ -1,6 +1,6 @@
 export const mockUsers = [
   {
-    user_id: 'admin-001',
+    user_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     create_dttm: '2025-12-11T10:10:11.862604Z',
     login: 'admin_user',
     email: 'admin@test.com',
@@ -9,7 +9,7 @@ export const mockUsers = [
     status_code: 'active',
   },
   {
-    user_id: 'merchant-002',
+    user_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
     create_dttm: '2025-12-12T11:20:00.000000Z',
     login: 'merchant_one',
     email: 'merchant@test.com',
@@ -18,7 +18,7 @@ export const mockUsers = [
     status_code: 'active',
   },
   {
-    user_id: '59d14af7-40b7-4cc7-a090-5b71d37b8c06',
+    user_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
     create_dttm: '2025-12-13T12:30:00.000000Z',
     login: 'trader_one',
     email: 'trader@test.com',
@@ -27,7 +27,7 @@ export const mockUsers = [
     status_code: 'active',
   },
   {
-    user_id: 'support-004',
+    user_id: 'c2aadc77-7e2d-4ab8-9d6f-8dd1df5a2c33',
     create_dttm: '2025-12-14T13:40:00.000000Z',
     login: 'support_one',
     email: 'support@test.com',
@@ -36,7 +36,7 @@ export const mockUsers = [
     status_code: 'active',
   },
   {
-    user_id: 'merchant-005',
+    user_id: 'd3bbed66-6f3e-4ac9-9e5e-9ee2ea6b3d44',
     create_dttm: '2025-12-15T14:50:00.000000Z',
     login: 'merchant_two',
     email: 'merchant2@test.com',
