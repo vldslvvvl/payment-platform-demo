@@ -16,7 +16,7 @@ export default function History() {
   return (
     <div>
       <PageHeader title="История" iconKey="history" />
-      <Table columns={COLUMNS} data={mockOrders} />
+      <Table columns={COLUMNS} data={mockOrders} limit={10} />
     </div>
   )
 }

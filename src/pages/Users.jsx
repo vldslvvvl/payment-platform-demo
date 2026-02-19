@@ -15,7 +15,7 @@ export default function Users() {
   return (
     <div>
       <PageHeader title="Пользователи" iconKey="profile" />
-      <Table columns={COLUMNS} data={mockUsers} />
+      <Table columns={COLUMNS} data={mockUsers} limit={10} />
     </div>
   )
 }

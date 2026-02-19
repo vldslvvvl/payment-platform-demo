@@ -14,7 +14,7 @@ export default function Banks() {
   return (
     <div>
       <PageHeader title="Банки" iconKey="banks" />
-      <Table columns={COLUMNS} data={mockBanks} />
+      <Table columns={COLUMNS} data={mockBanks} limit={10} />
     </div>
   )
 }

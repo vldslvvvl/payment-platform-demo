@@ -1,18 +1,6 @@
-const bankSber = {
-  name: 'sber',
-  id: 'e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b',
-  status: 'active',
-  code: 'sber900',
-  created_at: '2025-11-24T12:58:08.618509',
-}
+import { mockBanks } from './banks'
 
-const bankTinkoff = {
-  name: 'tinkoff',
-  id: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
-  status: 'active',
-  code: 'tinkoff001',
-  created_at: '2025-11-25T10:00:00.000000',
-}
+const banksById = Object.fromEntries(mockBanks.map((b) => [b.id, b]))
 
 export const mockRequisites = [
   {
@@ -40,7 +28,7 @@ export const mockRequisites = [
     qr_manager_key: null,
     created_at: '2025-12-19T18:46:37.724420',
     updated_at: '2025-12-19T18:46:37.724423',
-    bank: bankSber,
+    bank: banksById['e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b'],
     statistics: {
       stat_order_in_parallel: 0,
       trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
@@ -80,7 +68,7 @@ export const mockRequisites = [
     qr_manager_key: null,
     created_at: '2025-12-20T10:00:00.000000',
     updated_at: '2025-12-20T10:00:00.000000',
-    bank: bankTinkoff,
+    bank: banksById['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'],
     statistics: {
       stat_order_in_parallel: 2,
       trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',
@@ -120,7 +108,7 @@ export const mockRequisites = [
     qr_manager_key: null,
     created_at: '2025-12-21T14:00:00.000000',
     updated_at: '2025-12-22T09:00:00.000000',
-    bank: bankSber,
+    bank: banksById['e7f8a9b0-c1d2-4e3f-a4b5-6c7d8e9f0a1b'],
     statistics: {
       stat_order_in_parallel: 0,
       trader_id: 'b1ffcb88-8d1c-4fa9-8c7e-7cc0ce491b22',

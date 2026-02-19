@@ -9,6 +9,7 @@ import phoneIcon from '../assets/icons/cards/phone.svg'
 import cardTransferIcon from '../assets/icons/cards/card-transfer.svg'
 import activeIcon from '../assets/icons/active.svg'
 import inactiveIcon from '../assets/icons/inactive.svg'
+import { getBankIcon } from '../config/bankIcons'
 
 const usersById = Object.fromEntries(mockUsers.map((u) => [u.user_id, u]))
 
@@ -53,11 +54,22 @@ export default function Requisites() {
       label: 'Реквизиты',
       render: (row) => {
         const bankName = row.bank?.name ?? '—'
+        const bankIconSrc = row.bank ? getBankIcon(row.bank) : null
         const requisiteValue = getRequisiteDisplayValue(row)
         const iconSrc = REQUISITE_TYPE_ICON[row.requisites_type] ?? cardIcon
         return (
           <div className="flex flex-col gap-1">
-            <span>{bankName}</span>
+            <span className="flex items-center gap-2">
+              {bankIconSrc && (
+                <img
+                  src={bankIconSrc}
+                  alt=""
+                  className="w-4 h-4 shrink-0 object-contain"
+                  aria-hidden
+                />
+              )}
+              <span>{bankName}</span>
+            </span>
             <span className="flex items-center gap-2">
               <img
                 src={iconSrc}
@@ -123,7 +135,7 @@ export default function Requisites() {
   return (
     <div>
       <PageHeader title="Реквизиты" iconKey="cards" />
-      <Table columns={columns} data={mockRequisites} />
+      <Table columns={columns} data={mockRequisites} limit={10} />
     </div>
   )
 }
