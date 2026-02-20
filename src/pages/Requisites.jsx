@@ -5,6 +5,7 @@ import Button from '../components/ui/Button'
 import Checkbox from '../components/ui/Checkbox'
 import Modal from '../components/ui/Modal'
 import RequisiteFormModal from '../components/requisites/RequisiteFormModal'
+import RequisitesFiltersModal, { getEmptyRequisitesFilters } from '../components/requisites/RequisitesFiltersModal'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import Switch from '../components/ui/Switch'
@@ -40,6 +41,54 @@ function copyToClipboard(text) {
 const STATUS_VISIBLE_ROLES = ['admin', 'trader']
 const ACTIONS_VISIBLE_ROLES = ['admin']
 
+const OPERATION_LABELS = { debit: 'Пополнение', credit: 'Вывод' }
+const PAYMENT_METHOD_LABELS = { 'card2card': 'Номер карты', sbp: 'СБП', 'account-transfer': 'Номер счета' }
+
+function normalizeForSearch(s) {
+  return (s ?? '').replace(/\D/g, '')
+}
+
+function applyRequisitesFilters(list, filters) {
+  if (!filters) return list
+  const {
+    traderId,
+    cardNumber,
+    phoneNumber,
+    accountNumber,
+    operationType,
+    paymentMethod,
+    fullname,
+  } = filters
+  const hasNumberFilter = cardNumber || phoneNumber || accountNumber
+  const numberFilterNorm = cardNumber
+    ? normalizeForSearch(cardNumber)
+    : phoneNumber
+      ? normalizeForSearch(phoneNumber)
+      : accountNumber
+        ? normalizeForSearch(accountNumber)
+        : ''
+  const numberFilterType = cardNumber ? 'card' : phoneNumber ? 'phone' : accountNumber ? 'account' : null
+
+  return list.filter((row) => {
+    if (traderId && row.trader_id !== traderId) return false
+    if (operationType && row.operation_type !== operationType) return false
+    if (paymentMethod && row.requisites_type !== paymentMethod) return false
+    if (fullname) {
+      const rowName = (row.fullname ?? '').toLowerCase()
+      if (!rowName.includes(fullname.toLowerCase())) return false
+    }
+    if (hasNumberFilter && numberFilterNorm) {
+      const rowCard = normalizeForSearch(row.requisites)
+      const rowPhone = normalizeForSearch(row.phone_number)
+      const rowIban = normalizeForSearch(row.iban)
+      if (numberFilterType === 'card' && !rowCard.includes(numberFilterNorm)) return false
+      if (numberFilterType === 'phone' && !rowPhone.includes(numberFilterNorm)) return false
+      if (numberFilterType === 'account' && !rowIban.includes(numberFilterNorm)) return false
+    }
+    return true
+  })
+}
+
 export default function Requisites() {
   const { user } = useAuth()
   const toast = useToast()
@@ -47,6 +96,8 @@ export default function Requisites() {
   const [requisitesList, setRequisitesList] = useState(() => getRequisitesList(user.user_id))
   const [modalMode, setModalMode] = useState(null)
   const [editingRequisite, setEditingRequisite] = useState(null)
+  const [filters, setFilters] = useState(getEmptyRequisitesFilters)
+  const [filtersModalOpen, setFiltersModalOpen] = useState(false)
 
   useEffect(() => {
     setRequisitesList(getRequisitesList(user.user_id))
@@ -70,6 +121,27 @@ export default function Requisites() {
     setModalMode(null)
     setEditingRequisite(null)
   }, [])
+
+  const openFiltersModal = useCallback(() => setFiltersModalOpen(true), [])
+  const closeFiltersModal = useCallback(() => setFiltersModalOpen(false), [])
+  const handleFiltersSubmit = useCallback((newFilters) => {
+    setFilters(newFilters)
+    closeFiltersModal()
+  }, [closeFiltersModal])
+  const clearFilters = useCallback(() => setFilters(getEmptyRequisitesFilters()), [])
+
+  const hasActiveFilters = useMemo(() => {
+    const f = filters
+    return !!(
+      f.traderId ||
+      f.cardNumber ||
+      f.phoneNumber ||
+      f.accountNumber ||
+      f.operationType ||
+      f.paymentMethod ||
+      f.fullname
+    )
+  }, [filters])
 
   const handleSubmit = useCallback(
     (payload) => {
@@ -219,8 +291,8 @@ export default function Requisites() {
 
   const tableData = useMemo(() => {
     const list = hideInactive ? requisitesList.filter((row) => row.status === 'active') : requisitesList
-    return list
-  }, [hideInactive, requisitesList])
+    return applyRequisitesFilters(list, filters)
+  }, [hideInactive, requisitesList, filters])
 
   return (
     <div>
@@ -234,6 +306,7 @@ export default function Requisites() {
         <Button
           variant="secondary"
           icon={<img src={filterIcon} alt="" className="w-3 h-3 brightness-0 invert" aria-hidden />}
+          onClick={openFiltersModal}
         >
           Фильтры
         </Button>
@@ -243,6 +316,41 @@ export default function Requisites() {
           label="Скрыть неактивные"
         />
       </div>
+      {hasActiveFilters && (
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <span className="text-sm text-gray-400">Активные фильтры:</span>
+          {filters.traderId && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-600 px-2.5 py-0.5 text-sm text-gray-200">
+              Трейдер: {usersById[filters.traderId]?.login ?? filters.traderId}
+            </span>
+          )}
+          {(filters.cardNumber || filters.phoneNumber || filters.accountNumber) && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-600 px-2.5 py-0.5 text-sm text-gray-200">
+              {filters.cardNumber && `Карта: ${filters.cardNumber}`}
+              {filters.phoneNumber && `Телефон: ${filters.phoneNumber}`}
+              {filters.accountNumber && `Счёт: ${filters.accountNumber}`}
+            </span>
+          )}
+          {filters.operationType && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-600 px-2.5 py-0.5 text-sm text-gray-200">
+              Тип: {OPERATION_LABELS[filters.operationType] ?? filters.operationType}
+            </span>
+          )}
+          {filters.paymentMethod && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-600 px-2.5 py-0.5 text-sm text-gray-200">
+              Метод: {PAYMENT_METHOD_LABELS[filters.paymentMethod] ?? filters.paymentMethod}
+            </span>
+          )}
+          {filters.fullname && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-600 px-2.5 py-0.5 text-sm text-gray-200">
+              ФИО: {filters.fullname}
+            </span>
+          )}
+          <Button variant="secondary" onClick={clearFilters}>
+            Сбросить фильтры
+          </Button>
+        </div>
+      )}
       <Table columns={visibleColumns} data={tableData} limit={10} />
 
       <Modal
@@ -255,6 +363,14 @@ export default function Requisites() {
           initialRequisite={editingRequisite}
           onSubmit={handleSubmit}
           onClose={closeModal}
+        />
+      </Modal>
+
+      <Modal open={filtersModalOpen} onClose={closeFiltersModal} title="Фильтры">
+        <RequisitesFiltersModal
+          filters={filters}
+          onSubmit={handleFiltersSubmit}
+          onClose={closeFiltersModal}
         />
       </Modal>
     </div>
