@@ -6,6 +6,7 @@ import Checkbox from '../components/ui/Checkbox'
 import Modal from '../components/ui/Modal'
 import RequisiteFormModal from '../components/requisites/RequisiteFormModal'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import Switch from '../components/ui/Switch'
 import { mockUsers } from '../mocks/users'
 import { getRequisitesList, saveRequisite, updateRequisite } from '../utils/requisitesStorage'
@@ -41,6 +42,7 @@ const ACTIONS_VISIBLE_ROLES = ['admin']
 
 export default function Requisites() {
   const { user } = useAuth()
+  const toast = useToast()
   const [hideInactive, setHideInactive] = useState(false)
   const [requisitesList, setRequisitesList] = useState(() => getRequisitesList(user.user_id))
   const [modalMode, setModalMode] = useState(null)
@@ -75,13 +77,15 @@ export default function Requisites() {
       if (modalMode === 'create') {
         const withId = { ...payload, id: crypto.randomUUID(), trader_id: traderId }
         setRequisitesList(saveRequisite(withId, traderId))
+        toast.success('Реквизит успешно создан')
       } else {
         const withTrader = { ...editingRequisite, ...payload, trader_id: editingRequisite.trader_id || traderId }
         setRequisitesList(updateRequisite(withTrader, traderId))
+        toast.success('Реквизит успешно изменён')
       }
       closeModal()
     },
-    [user.user_id, modalMode, editingRequisite, closeModal]
+    [user.user_id, modalMode, editingRequisite, closeModal, toast]
   )
 
   const handleStatusChange = useCallback(
@@ -90,8 +94,9 @@ export default function Requisites() {
       const updated = { ...row, status: newStatus }
       const traderId = row.trader_id || user.user_id
       setRequisitesList(updateRequisite(updated, traderId))
+      toast.success(newStatus === 'active' ? 'Реквизит активирован' : 'Реквизит деактивирован')
     },
-    [user.user_id]
+    [user.user_id, toast]
   )
 
   const columns = useMemo(() => [

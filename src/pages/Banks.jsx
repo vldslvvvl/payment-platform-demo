@@ -6,8 +6,7 @@ const COLUMNS = [
   { key: 'id', label: 'ID' },
   { key: 'name', label: 'Название' },
   { key: 'code', label: 'Код' },
-  { key: 'status', label: 'Статус' },
-  { key: 'created_at', label: 'Создан' },
+  { key: 'status', label: 'Статус' }
 ]
 
 export default function Banks() {
