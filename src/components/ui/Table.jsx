@@ -6,6 +6,21 @@ function getCellValue(row, key) {
 }
 
 /**
+ * Фильтрует колонки по роли пользователя.
+ * @param {Array<{ key: string, label: string, render?: (row: Record<string, unknown>) => import('react').ReactNode }>} columns - все колонки
+ * @param {string} role - текущая роль пользователя
+ * @param {Record<string, string[]>} visibilityByColumn - для каждой колонки (key) список ролей, которым она видна. Если ключа нет — колонка видна всем.
+ * @returns {typeof columns} отфильтрованный массив колонок
+ */
+export function filterColumnsByRole(columns, role, visibilityByColumn) {
+  return columns.filter((col) => {
+    const allowedRoles = visibilityByColumn[col.key]
+    if (allowedRoles == null) return true
+    return allowedRoles.includes(role)
+  })
+}
+
+/**
  * @param {{ columns: Array<{ key: string, label: string, render?: (row: Record<string, unknown>) => import('react').ReactNode }>, data: Array<Record<string, unknown>>, limit?: number }} props
  */
 export default function Table({ columns, data, limit = 10 }) {

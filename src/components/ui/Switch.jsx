@@ -19,7 +19,7 @@ export default function Switch({ checked, onChange, disabled = false }) {
     >
       <span
         className={`
-          pointer-events-none inline-block h-4 w-4 translate-y-0.5 rounded-full bg-white shadow
+          pointer-events-none inline-block h-4 w-4 translate-y-0.25 rounded-full bg-white shadow
           transition-transform duration-200
           ${checked ? 'translate-x-4' : 'translate-x-0.5'}
         `}

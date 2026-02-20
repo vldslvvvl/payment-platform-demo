@@ -53,7 +53,7 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={() => setCollapsed((c) => !c)}
-            className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-colors shrink-0"
+            className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 cursor-pointer hover:text-white hover:bg-[#1a1a1a] transition-colors shrink-0"
             title={collapsed ? 'Развернуть меню' : 'Свернуть меню'}
           >
             {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}

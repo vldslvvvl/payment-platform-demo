@@ -1,14 +1,20 @@
-import { useCallback } from 'react'
-import Table from '../components/ui/Table'
+import { useCallback, useMemo, useState, useEffect } from 'react'
+import Table, { filterColumnsByRole } from '../components/ui/Table'
 import PageHeader from '../components/ui/PageHeader'
+import Button from '../components/ui/Button'
+import Checkbox from '../components/ui/Checkbox'
+import Modal from '../components/ui/Modal'
+import RequisiteFormModal from '../components/requisites/RequisiteFormModal'
+import { useAuth } from '../context/AuthContext'
 import Switch from '../components/ui/Switch'
-import { mockRequisites } from '../mocks/requisites'
 import { mockUsers } from '../mocks/users'
+import { getRequisitesList, saveRequisite, updateRequisite } from '../utils/requisitesStorage'
 import cardIcon from '../assets/icons/cards/card.svg'
 import phoneIcon from '../assets/icons/cards/phone.svg'
 import cardTransferIcon from '../assets/icons/cards/card-transfer.svg'
 import activeIcon from '../assets/icons/active.svg'
 import inactiveIcon from '../assets/icons/inactive.svg'
+import filterIcon from '../assets/icons/filter.svg'
 import { getBankIcon } from '../config/bankIcons'
 
 const usersById = Object.fromEntries(mockUsers.map((u) => [u.user_id, u]))
@@ -30,12 +36,65 @@ function copyToClipboard(text) {
   return navigator.clipboard.writeText(text)
 }
 
+const STATUS_VISIBLE_ROLES = ['admin', 'trader']
+const ACTIONS_VISIBLE_ROLES = ['admin']
+
 export default function Requisites() {
+  const { user } = useAuth()
+  const [hideInactive, setHideInactive] = useState(false)
+  const [requisitesList, setRequisitesList] = useState(() => getRequisitesList(user.user_id))
+  const [modalMode, setModalMode] = useState(null)
+  const [editingRequisite, setEditingRequisite] = useState(null)
+
+  useEffect(() => {
+    setRequisitesList(getRequisitesList(user.user_id))
+  }, [user.user_id])
+
   const handleCopyId = useCallback((id) => {
     copyToClipboard(id)
   }, [])
 
-  const columns = [
+  const openCreate = useCallback(() => {
+    setEditingRequisite(null)
+    setModalMode('create')
+  }, [])
+
+  const openEdit = useCallback((row) => {
+    setEditingRequisite(row)
+    setModalMode('edit')
+  }, [])
+
+  const closeModal = useCallback(() => {
+    setModalMode(null)
+    setEditingRequisite(null)
+  }, [])
+
+  const handleSubmit = useCallback(
+    (payload) => {
+      const traderId = user.user_id
+      if (modalMode === 'create') {
+        const withId = { ...payload, id: crypto.randomUUID(), trader_id: traderId }
+        setRequisitesList(saveRequisite(withId, traderId))
+      } else {
+        const withTrader = { ...editingRequisite, ...payload, trader_id: editingRequisite.trader_id || traderId }
+        setRequisitesList(updateRequisite(withTrader, traderId))
+      }
+      closeModal()
+    },
+    [user.user_id, modalMode, editingRequisite, closeModal]
+  )
+
+  const handleStatusChange = useCallback(
+    (row) => {
+      const newStatus = row.status === 'active' ? 'inactive' : 'active'
+      const updated = { ...row, status: newStatus }
+      const traderId = row.trader_id || user.user_id
+      setRequisitesList(updateRequisite(updated, traderId))
+    },
+    [user.user_id]
+  )
+
+  const columns = useMemo(() => [
     {
       key: 'id',
       label: 'ID',
@@ -127,15 +186,72 @@ export default function Requisites() {
       key: 'status',
       label: 'Статус',
       render: (row) => (
-        <Switch checked={row.status === 'active'} disabled />
+        <Switch
+          checked={row.status === 'active'}
+          onChange={() => handleStatusChange(row)}
+        />
       ),
     },
-  ]
+    {
+      key: 'actions',
+      label: 'Действия',
+      render: (row) => (
+        <Button variant="secondary" onClick={() => openEdit(row)}>
+          Изменить
+        </Button>
+      ),
+    },
+  ], [openEdit, handleStatusChange])
+
+  const visibleColumns = useMemo(
+    () =>
+      filterColumnsByRole(columns, user.role, {
+        status: STATUS_VISIBLE_ROLES,
+        actions: ACTIONS_VISIBLE_ROLES,
+      }),
+    [columns, user.role]
+  )
+
+  const tableData = useMemo(() => {
+    const list = hideInactive ? requisitesList.filter((row) => row.status === 'active') : requisitesList
+    return list
+  }, [hideInactive, requisitesList])
 
   return (
     <div>
       <PageHeader title="Реквизиты" iconKey="cards" />
-      <Table columns={columns} data={mockRequisites} limit={10} />
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        {user.role === 'trader' && (
+          <Button variant="primary" onClick={openCreate}>
+            Добавить реквизит
+          </Button>
+        )}
+        <Button
+          variant="secondary"
+          icon={<img src={filterIcon} alt="" className="w-3 h-3 brightness-0 invert" aria-hidden />}
+        >
+          Фильтры
+        </Button>
+        <Checkbox
+          checked={hideInactive}
+          onChange={setHideInactive}
+          label="Скрыть неактивные"
+        />
+      </div>
+      <Table columns={visibleColumns} data={tableData} limit={10} />
+
+      <Modal
+        open={modalMode !== null}
+        onClose={closeModal}
+        title={modalMode === 'create' ? 'Добавить реквизит' : 'Редактировать реквизит'}
+      >
+        <RequisiteFormModal
+          mode={modalMode === 'create' ? 'create' : 'edit'}
+          initialRequisite={editingRequisite}
+          onSubmit={handleSubmit}
+          onClose={closeModal}
+        />
+      </Modal>
     </div>
   )
 }
